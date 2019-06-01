@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--不拦截页面-->
+    <http pattern="/*.html" security="none"/>
+    <http pattern="/css/**" security="none"/>
+    <http pattern="/img/**" security="none"/>
+    <http pattern="/js/**" security="none"/>
+    <http pattern="/plugins/**" security="none"/>
+
+    <!--不使用SPEL表达式-->
+    <http use-expressions="false">
+        <!--必须有角色才能访问-->
+        <intercept-url pattern="/**" access="ROLE_ADMIN"/>
+        <!--表单登陆
+         login-page没有登陆跳转的页面
+         default-target-url登陆后跳转的页面
+         authentication-failure-url失败后跳转的页面
+         always-use-default-target总是跳转登陆后跳转的页面-->
+        <form-login login-page="/login.html"
+                    default-target-url="/admin/index.html"
+                    authentication-failure-url="/login.html"
+        always-use-default-target="true"/>
+        <!--跨域请求关闭-->
+        <csrf disabled="true"/>
+        <!--允许内嵌页面访问-->
+        <headers>
+            <frame-options policy="SAMEORIGIN"/>
+        </headers>
+        <!--登出-->
+        <logout invalidate-session="true" logout-success-url="/login.html" />
+    </http>
+
+
+    <!-- 认证管理器 -->
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="admin" password="123456" authorities="ROLE_ADMIN"/>
+                <user name="cc" password="123456" authorities="ROLE_ADMIN"/>
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>
